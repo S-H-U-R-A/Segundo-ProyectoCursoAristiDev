@@ -1,5 +1,9 @@
 package com.example.jetpackcomposecatalogo
 
+import android.app.PendingIntent
+import android.app.TaskStackBuilder
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -51,6 +55,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintLayoutBaseScope
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.layoutId
+import androidx.core.net.toUri
 import com.example.jetpackcomposecatalogo.ui.theme.JetPackComposeCatalogoTheme
 
 class MainActivity : ComponentActivity() {
@@ -63,7 +68,26 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MyStateExample()
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+                        Button(
+                            onClick = {
+                                val deepLinkIntent = Intent(
+                                    Intent.ACTION_VIEW,
+                                    "myapptest.com://home/Te amo muchisimo mi princesa precisosa".toUri()
+                                )
+                                val deepLinkPendingIntent: PendingIntent? = TaskStackBuilder.create(applicationContext).run {
+                                    this.addNextIntentWithParentStack(deepLinkIntent)
+                                    this.getPendingIntent(
+                                        0,
+                                        PendingIntent.FLAG_UPDATE_CURRENT.or(PendingIntent.FLAG_IMMUTABLE)
+                                    )
+                                }
+                                deepLinkPendingIntent?.send()
+                            }
+                        ) {
+                            Text(text = "Ir a la otra app")
+                        }
+                    }
                 }
             }
         }
